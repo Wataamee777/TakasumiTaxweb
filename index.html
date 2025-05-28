@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>【非公式】TakasumiTax web</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SheetJS CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f0f4f8;
+      color: #333;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1em;
+      color: #007acc;
+    }
+
+    #filename {
+      font-weight: bold;
+      margin-bottom: 1em;
+      color: #555;
+    }
+
+    #output {
+      background: #fff;
+      padding: 1em;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 1em;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #007acc;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #eef;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 10px 0;
+    }
+
+    @media screen and (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      th, td {
+        font-size: 0.9em;
+        padding: 8px;
+      }
+
+      h1 {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>サーバー上のExcelを表示</h1>
+  <p id="filename">ファイル名: <code>TakasumiTax</code></p>
+  <div id="output">読み込み中...</div>
+
+  <script>
+    fetch('data.xlsx')
+      .then(response => {
+        if (!response.ok) throw new Error("ファイルの読み込みに失敗しました");
+        return response.arrayBuffer();
+      })
+      .then(buffer => {
+        const workbook = XLSX.read(buffer, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const html = XLSX.utils.sheet_to_html(worksheet, { editable: true, header: "" });
+
+        // 表だけ抽出
+        const tableOnly = html.match(/<table[\s\S]*<\/table>/i);
+        document.getElementById('output').innerHTML = tableOnly ? tableOnly[0] : "テーブルが見つかりません";
+      })
+      .catch(error => {
+        document.getElementById('output').textContent = "読み込み失敗: " + error.message;
+      });
+  </script>
+
+</body>
+</html>
