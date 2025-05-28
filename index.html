@@ -101,7 +101,7 @@
     .then(buffer => {
       const workbook = XLSX.read(buffer, { type: 'array' });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+      const data = XLSX.utils.sheet_to_json(sheet, { header: 1,12 });
 
       let html = '<table border="1" style="border-collapse:collapse;width:100%;">';
 
