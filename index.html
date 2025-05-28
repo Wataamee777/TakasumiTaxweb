@@ -109,6 +109,7 @@
         html += '<tr>';
         row.forEach(cell => {
           const isHeader = [0, 11].includes(i); // JavaScriptでは0始まり
+          const tag = i === 0 ? 'th' : 'td';
           html += `<${tag} style="padding:8px;user-select:none;">${cell ?? ''}</${tag}>`;
         });
         html += '</tr>';
